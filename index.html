@@ -43,7 +43,6 @@ th{color:#8b93a1;cursor:pointer}
       <thead><tr>
         <th data-k="name">Name</th><th data-k="rank">Rank</th>
         <th data-k="power">Power</th><th data-k="dp">Power Δ</th>
-        <th data-k="kills">Kills</th><th data-k="dk">Kills Δ</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -83,8 +82,7 @@ function render() {
   });
   document.getElementById("tbody").innerHTML = list.map(m =>
     `<tr><td>${esc(m.name)}</td><td>${esc(m.rank)}</td>
-     <td>${fmt(m.power)}</td><td class="${cls(m.dp)}">${gain(m.dp)}</td>
-     <td>${fmt(m.kills)}</td><td class="${cls(m.dk)}">${gain(m.dk)}</td></tr>`).join("");
+     <td>${fmt(m.power)}</td><td class="${cls(m.dp)}">${gain(m.dp)}</td></tr>`).join("");
 }
 
 fetch("data/snapshots.csv?" + Date.now())
@@ -92,7 +90,7 @@ fetch("data/snapshots.csv?" + Date.now())
   .then(t => {
     const rows = parseCSV(t.trim()); rows.shift();
     const data = rows.filter(r => r.length >= 7).map(r => ({
-      ts: +r[0], id: r[1], name: r[2], power: +r[3], kills: +r[4], rank: /^leader$/i.test(r[6]) ? "R5" : r[6]
+      ts: +r[0], id: r[1], name: r[2], power: +r[3], rank: /^leader$/i.test(r[6]) ? "R5" : r[6]
     }));
     const byTs = {};
     data.forEach(d => (byTs[d.ts] = byTs[d.ts] || []).push(d));
@@ -111,7 +109,7 @@ fetch("data/snapshots.csv?" + Date.now())
 
     members = byTs[latest].map(d => {
       const b = baseMap[d.id];
-      return { ...d, dp: b ? d.power - b.power : null, dk: b ? d.kills - b.kills : null };
+      return { ...d, dp: b ? d.power - b.power : null };
     });
 
     document.getElementById("c-count").textContent = members.length;
