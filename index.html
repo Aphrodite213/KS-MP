@@ -92,7 +92,7 @@ fetch("data/snapshots.csv?" + Date.now())
   .then(t => {
     const rows = parseCSV(t.trim()); rows.shift();
     const data = rows.filter(r => r.length >= 7).map(r => ({
-      ts: +r[0], id: r[1], name: r[2], power: +r[3], kills: +r[4], rank: r[6]
+      ts: +r[0], id: r[1], name: r[2], power: +r[3], kills: +r[4], rank: /^leader$/i.test(r[6]) ? "R5" : r[6]
     }));
     const byTs = {};
     data.forEach(d => (byTs[d.ts] = byTs[d.ts] || []).push(d));
